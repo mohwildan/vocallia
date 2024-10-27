@@ -9,6 +9,9 @@ jobs:
   release:
     runs-on: ubuntu-latest
 
+    env:
+      RELEASE_VERSION: ${{vars.RELEASE_VERSION}}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -29,9 +32,9 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           token: ${{ secrets.GH_TOKEN }}
-          tag: ${{ variables.RELEASE_VERSION }}
-          name: 'Release ${{ variables.RELEASE_VERSION }}'
+          tag: ${{ env.RELEASE_VERSION }} # Akses dengan 'env'
+          name: 'Release ${{ env.RELEASE_VERSION }}'
           artifacts: |
-            ./release/build/Vocallia-${{variables.RELEASE_VERSION}}.dmg
+            ./release/build/Vocallia-${{ env.RELEASE_VERSION }}.dmg
           draft: false
           prerelease: false
