@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - release/build # Hanya akan berjalan pada branch ini
-  release:
-    types: [published] # Bisa juga trigger pada rilis yang diterbitkan
 
 jobs:
   build:
