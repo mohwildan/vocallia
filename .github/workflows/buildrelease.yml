@@ -7,10 +7,6 @@ on:
 
 jobs:
   publish:
-    # To enable auto publishing to github, update your electron publisher
-    # config in package.json > "build" and remove the conditional below
-    # if: ${{ github.repository_owner == 'vocallia' }}
-
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -33,15 +29,20 @@ jobs:
           npm run postinstall
           npm run build
 
-      - name: Publish releases
-        env:
-          # The APPLE_* values are used for auto updates signing
-          # APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_ID_PASS }}
-          # APPLE_ID: ${{ secrets.APPLE_ID }}
-          # APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          # CSC_LINK: ${{ secrets.CSC_LINK }}
-          # CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
-          # This is used for uploading release assets to github
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: |
-          npm exec electron-builder -- --publish always --win --mac --linuxe
+      # - name: Publish releases
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      #   run: |
+      #     npm exec electron-builder -- --publish always --mac --win --linux
+
+      - name: Upload release assets
+        if: success()
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          tag: 'v1.0.0' # specify the tag for your release
+          name: 'Release v1.0.0' # specify the release name
+          files: |
+            ./release/build/ElectronReact-4.6.0.dmg
+          draft: false
+          prerelease: false
