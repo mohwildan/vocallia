@@ -1,28 +1,47 @@
-name: Build and Release
+name: Publish
 
 on:
   push:
     branches:
-      - main # Hanya akan berjalan pada branch ini
+      - main
 
 jobs:
-  build:
-    name: Build binaries
-    runs-on: ubuntu-latest
+  publish:
+    # To enable auto publishing to github, update your electron publisher
+    # config in package.json > "build" and remove the conditional below
+    if: ${{ github.repository_owner == 'electron-react-boilerplate' }}
+
+    runs-on: ${{ matrix.os }}
+
     strategy:
       matrix:
-        os: [win-x64, win-x86, win-arm64, linux-x64, linux-arm, osx-x64]
-    env:
-      ENVIRONMENT: dev # Menambahkan variabel lingkungan
+        os: [macos-latest]
+
     steps:
-      - name: '📄 Checkout'
+      - name: Checkout git repo
         uses: actions/checkout@v3
-      - name: '📦 Package ${{ matrix.os }}'
+
+      - name: Install Node and NPM
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: npm
+
+      - name: Install and build
         run: |
-          cd ${{ github.workspace }}
-          dotnet publish feedmd.csproj -r ${{ matrix.os }} -c Release -o bin/${{ matrix.os }}
-          zip -r feedmd-${{ matrix.os }}.zip bin/${{ matrix.os }} -j
-          gh release upload ${{ github.event.release.tag_name }} feedmd-${{ matrix.os }}.zip
+          npm install
+          npm run postinstall
+          npm run build
+
+      - name: Publish releases
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
-        shell: bash
+          # The APPLE_* values are used for auto updates signing
+          # APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_ID_PASS }}
+          # APPLE_ID: ${{ secrets.APPLE_ID }}
+          # APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          # CSC_LINK: ${{ secrets.CSC_LINK }}
+          # CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+          # This is used for uploading release assets to github
+          GH_TOKEN: ${{ secrets.TOKEN }}
+        run: |
+          npm exec electron-builder -- --publish always --win --mac --linux
