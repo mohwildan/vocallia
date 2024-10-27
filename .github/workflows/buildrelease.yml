@@ -3,7 +3,7 @@ name: Build and Release
 on:
   push:
     branches:
-      - release/build # Hanya akan berjalan pada branch ini
+      - main # Hanya akan berjalan pada branch ini
 
 jobs:
   build:
