@@ -29,9 +29,9 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           token: ${{ secrets.GH_TOKEN }}
-          tag: ${{ github.ref }} # Menggunakan tag yang dipush
-          name: 'Release ${{ github.ref }}'
+          tag: ${{ variables.RELEASE_VERSION }}
+          name: 'Release ${{ variables.RELEASE_VERSION }}'
           artifacts: |
-            ./release/build/Vocallia-1.0.0.dmg
+            ./release/build/Vocallia-${{variables.RELEASE_VERSION}}.dmg
           draft: false
           prerelease: false
