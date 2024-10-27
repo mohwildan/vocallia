@@ -173,8 +173,8 @@
     "webpack-merge": "^5.9.0"
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.erb.ElectronReact",
+    "productName": "Vocallia",
+    "appId": "com.vocallia.app",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
     "files": [

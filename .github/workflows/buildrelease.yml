@@ -32,13 +32,9 @@ jobs:
           npm run package
           ls -la ./release/build || true
 
-      - name: Create a unique tag
-        id: create_tag
-        run: echo "TAG_NAME=v1.0.0-${GITHUB_SHA::7}" >> $GITHUB_ENV
-
-      # - name: List build directory
-      #   run: |
-      #     ls -la ./release/build
+      # - name: Create a unique tag
+      #   id: create_tag
+      #   run: echo "TAG_NAME=v1.0.0-${GITHUB_SHA::7}" >> $GITHUB_ENV
 
       - name: Upload release assets
         if: success()
@@ -48,6 +44,6 @@ jobs:
           tag: ${{ env.TAG_NAME }} # Use the dynamically created tag
           name: 'Release ${{ env.TAG_NAME }}'
           artifacts: |
-            ./release/build/ElectronReact-4.6.0-arm64.dmg
+            ./release/build/Vocallia-4.6.0.dmg
           draft: false
           prerelease: false
