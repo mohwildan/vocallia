@@ -26,23 +26,19 @@ jobs:
       - name: Install and build
         run: |
           npm install
-          # npm run postinstall
-          # npm run build
           npm install package
 
-      # - name: Publish releases
-      #   env:
-      #     GH_TOKEN: ${{ secrets.GH_TOKEN }}
-      #   run: |
-      #     npm exec electron-builder -- --publish always --mac --win --linux
+      - name: Create a unique tag
+        id: create_tag
+        run: echo "TAG_NAME=v1.0.0-${GITHUB_SHA::7}" >> $GITHUB_ENV
 
       - name: Upload release assets
         if: success()
         uses: ncipollo/release-action@v1
         with:
           token: ${{ secrets.GH_TOKEN }}
-          tag: 'v1.0.0' # specify the tag for your release
-          name: 'Release v1.0.0' # specify the release name
+          tag: ${{ env.TAG_NAME }} # Use the dynamically created tag
+          name: 'Release ${{ env.TAG_NAME }}'
           artifacts: |
             ./release/build/ElectronReact-4.6.0.dmg
           draft: false
