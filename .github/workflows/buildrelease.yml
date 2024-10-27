@@ -1,3 +1,12 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - release/build # Hanya akan berjalan pada branch ini
+  release:
+    types: [published] # Bisa juga trigger pada rilis yang diterbitkan
+
 jobs:
   build:
     name: Build binaries
@@ -6,7 +15,7 @@ jobs:
       matrix:
         os: [win-x64, win-x86, win-arm64, linux-x64, linux-arm, osx-x64]
     env:
-      ENVIRONMENT: dev # Add your environment variable here
+      ENVIRONMENT: dev # Menambahkan variabel lingkungan
     steps:
       - name: '📄 Checkout'
         uses: actions/checkout@v3
