@@ -26,8 +26,9 @@ jobs:
       - name: Install and build
         run: |
           npm install
-          npm run postinstall
-          npm run build
+          # npm run postinstall
+          # npm run build
+          npm install package
 
       # - name: Publish releases
       #   env:
@@ -42,7 +43,7 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
           tag: 'v1.0.0' # specify the tag for your release
           name: 'Release v1.0.0' # specify the release name
-          files: |
+          artifacts: |
             ./release/build/ElectronReact-4.6.0.dmg
           draft: false
           prerelease: false
