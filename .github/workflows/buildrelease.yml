@@ -2,8 +2,8 @@ name: Release
 
 on:
   push:
-    tags:
-      - 'v*' # Mendeteksi semua tag yang diawali dengan 'v'
+    branches:
+      - main
 
 jobs:
   release:
