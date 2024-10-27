@@ -1,0 +1,28 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main # Hanya akan berjalan pada branch ini
+
+jobs:
+  build:
+    name: Build binaries
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [win-x64, win-x86, win-arm64, linux-x64, linux-arm, osx-x64]
+    env:
+      ENVIRONMENT: dev # Menambahkan variabel lingkungan
+    steps:
+      - name: '📄 Checkout'
+        uses: actions/checkout@v3
+      - name: '📦 Package ${{ matrix.os }}'
+        run: |
+          cd ${{ github.workspace }}
+          dotnet publish feedmd.csproj -r ${{ matrix.os }} -c Release -o bin/${{ matrix.os }}
+          zip -r feedmd-${{ matrix.os }}.zip bin/${{ matrix.os }} -j
+          gh release upload ${{ github.event.release.tag_name }} feedmd-${{ matrix.os }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        shell: bash
