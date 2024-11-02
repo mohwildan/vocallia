@@ -1,17 +1,15 @@
 name: Release
-
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*'
 
 jobs:
   release:
-    runs-on: ubuntu-latest
-
-    env:
-      RELEASE_VERSION: ${{vars.RELEASE_VERSION}}
-
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -20,24 +18,47 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: npm
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm install
 
       - name: Build the app
-        run: |
-          npm run package
-          # log path
-          ls -la ./release/build || true
+        run: npm run package:all
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
-      - name: Upload Release Assets
-        uses: ncipollo/release-action@v1
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
         with:
-          token: ${{ secrets.GH_TOKEN }}
-          tag: ${{ env.RELEASE_VERSION }} # Akses dengan 'env'
-          name: 'Release ${{ env.RELEASE_VERSION }}'
-          artifacts: |
-            ./release/build/Vocallia-${{ env.RELEASE_VERSION }}.dmg
+          name: ${{ matrix.os }}-artifacts
+          path: |
+            release/build/*.exe
+            release/build/*.dmg
+            release/build/*.AppImage
+          if-no-files-found: ignore
+
+  create-release:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            *-artifacts/*.exe
+            *-artifacts/*.dmg
+            *-artifacts/*.AppImage
           draft: false
           prerelease: false
+          name: Release ${{ github.ref_name }}
+          body: |
+            Release ${{ github.ref_name }}
+
+            ### Changes in this version:
+            - Add your changes here
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}

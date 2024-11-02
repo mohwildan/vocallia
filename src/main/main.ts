@@ -11,9 +11,31 @@
 import path from 'path';
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
+import fs from 'fs';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+
+const userDataPath = app.getPath('userData');
+const vocabularyFilePath = path.join(userDataPath, 'vocabulary.json');
+const initialVocabularyData = {
+  Nouns: {
+    Hello: 'Halo',
+    Goodbye: 'Selamat tinggal',
+  },
+  Verbs: {
+    Run: 'Berlari',
+    Walk: 'Berjalan',
+  },
+  Adjectives: {
+    Beautiful: 'Cantik',
+    Smart: 'Pintar',
+  },
+  Adverbs: {
+    Quickly: 'Dengan cepat',
+    Slowly: 'Dengan lambat',
+  },
+};
 
 class AppUpdater {
   constructor() {
@@ -104,6 +126,38 @@ const createWindow = async () => {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+
+  // Handle loading vocabulary
+  ipcMain.handle('load-vocabulary', () => {
+    try {
+      if (!fs.existsSync(vocabularyFilePath)) {
+        // If file doesn't exist, create it with initial data
+        fs.writeFileSync(
+          vocabularyFilePath,
+          JSON.stringify(initialVocabularyData, null, 2),
+        );
+        return initialVocabularyData;
+      }
+
+      const data = fs.readFileSync(vocabularyFilePath, 'utf8');
+      return JSON.parse(data);
+    } catch (error) {
+      console.error('Error loading vocabulary:', error);
+      return initialVocabularyData;
+    }
+  });
+
+  // Handle saving vocabulary
+  ipcMain.handle('save-vocabulary', (_, data) => {
+    try {
+      fs.writeFileSync(vocabularyFilePath, JSON.stringify(data, null, 2));
+      return true;
+    } catch (error) {
+      console.error('Error saving vocabulary:', error);
+      return false;
+    }
+  });
+
   ipcMain.on('minimize-window', () => {
     if (mainWindow) mainWindow.minimize();
   });
