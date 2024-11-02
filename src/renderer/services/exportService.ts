@@ -22,7 +22,12 @@ export class ExportService {
   }
 
   public static exportToJson(vocabulary: VocabularyData): void {
-    const jsonContent = JSON.stringify(vocabulary, null, 2);
+    const rememberedWords = localStorage.getItem('rememberedWords');
+    const context = {
+      vocabulary,
+      rememberedWords: rememberedWords ? JSON.parse(rememberedWords) : {},
+    };
+    const jsonContent = JSON.stringify(context, null, 2);
     this.downloadFile(jsonContent, 'application/json', 'json');
   }
 

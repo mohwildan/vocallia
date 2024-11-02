@@ -8,31 +8,43 @@ import Modal from './components/Modal';
 import OptionsDropdown from './components/OptionsDropdown';
 import VocabularyList from './components/VocabularyList';
 
+// Initial vocabulary data
+const initialVocabularyData = {
+  Nouns: {
+    Hello: 'Halo',
+    Goodbye: 'Selamat tinggal',
+  },
+  Verbs: {
+    Run: 'Berlari',
+    Walk: 'Berjalan',
+  },
+  Adjectives: {
+    Beautiful: 'Cantik',
+    Smart: 'Pintar',
+  },
+  Adverbs: {
+    Quickly: 'Dengan cepat',
+    Slowly: 'Dengan lambat',
+  },
+};
+
+// Initialize localStorage with default data if it doesn't exist
+const initializeLocalStorage = () => {
+  if (!localStorage.getItem('vocabulary')) {
+    localStorage.setItem('vocabulary', JSON.stringify(initialVocabularyData));
+  }
+};
+
 const getInitialVocabulary = (): Record<string, Record<string, string>> => {
-  const savedVocabulary = localStorage.getItem('vocabulary');
-  return savedVocabulary
-    ? JSON.parse(savedVocabulary)
-    : {
-        Nouns: {
-          Hello: 'Halo',
-          Goodbye: 'Selamat tinggal',
-        },
-        Verbs: {
-          Run: 'Berlari',
-          Walk: 'Berjalan',
-        },
-        Adjectives: {
-          Beautiful: 'Cantik',
-          Smart: 'Pintar',
-        },
-        Adverbs: {
-          Quickly: 'Dengan cepat',
-          Slowly: 'Dengan lambat',
-        },
-      };
+  return JSON.parse(localStorage.getItem('vocabulary') || '{}');
 };
 
 const Hello = () => {
+  // Initialize localStorage when component mounts
+  useEffect(() => {
+    initializeLocalStorage();
+  }, []);
+
   const [vocabulary, setVocabulary] = useState(getInitialVocabulary());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalListOpen, setIsModalListOpen] = useState(false);
@@ -55,7 +67,7 @@ const Hello = () => {
 
   const shuffleArray = (array: number[]) => {
     const newArray = [...array];
-    for (let i = newArray.length - 1; i > 0; i--) {
+    for (let i = newArray.length - 1; i > 0; i -= 1) {
       const j = Math.floor(Math.random() * (i + 1));
       [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
     }
@@ -82,13 +94,13 @@ const Hello = () => {
   };
 
   const handlePrevious = () => {
-    setCurrentIndex((prevIndex) =>
+    setCurrentIndex((prevIndex: any) =>
       prevIndex > 0 ? prevIndex - 1 : vocabularyEntries.length - 1,
     );
   };
 
   const handleNext = useCallback(() => {
-    setCurrentIndex((prevIndex) =>
+    setCurrentIndex((prevIndex: any) =>
       prevIndex < vocabularyEntries.length - 1 ? prevIndex + 1 : 0,
     );
   }, [vocabularyEntries.length]);
@@ -130,20 +142,6 @@ const Hello = () => {
       <div className="header">
         <TitleBar />
         <div className="header-controls">
-          {/* <button
-            type="button"
-            onClick={handleRandomToggle}
-            className={`random-mode-btn ${isRandomMode ? 'active' : ''}`}
-          >
-            {isRandomMode ? 'Sequential Mode' : 'Random Mode'}
-          </button>
-          <button
-            type="button"
-            onClick={() => setAutoNext(!autoNext)}
-            className={`auto-next-btn ${autoNext ? 'active' : ''}`}
-          >
-            {autoNext ? 'Stop Auto Next' : 'Start Auto Next'}
-          </button> */}
           <OptionsDropdown
             autoSpeak={autoSpeak}
             onClickSpeak={onClickSpeak}

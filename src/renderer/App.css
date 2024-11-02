@@ -257,7 +257,7 @@ body {
   border-radius: 12px;
   padding: 24px;
   width: 90%;
-  max-width: 400px;
+  max-width: 1000px;
   position: relative;
   border: 1px solid var(--border-color);
 }
@@ -398,6 +398,142 @@ body {
   display: flex;
   gap: 1rem;
   align-items: center;
+}
+
+.vocabulary-list {
+  padding: 20px;
+}
+
+.list-header {
+  margin-bottom: 20px;
+}
+
+.list-header h2 {
+  margin: 0 0 10px 0;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.progress-info {
+  margin-bottom: 15px;
+  color: #666;
+  font-size: 14px;
+}
+
+.list-controls {
+  display: flex;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.search-input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.category-select {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  min-width: 150px;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.vocabulary-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.vocabulary-table th,
+.vocabulary-table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.vocabulary-table th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+}
+
+.vocabulary-table th.sortable {
+  cursor: pointer;
+}
+
+.vocabulary-table th.sortable:hover {
+  background-color: #ebebeb;
+}
+
+.vocabulary-table tr:hover {
+  background-color: #f8f8f8;
+}
+
+.checkbox-cell {
+  text-align: center;
+  width: 40px;
+}
+
+.checkbox-button {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.checkbox-button:hover {
+  border-color: #999;
+}
+
+.checkbox-button.checked {
+  background-color: #4caf50;
+  border-color: #4caf50;
+}
+
+.check-icon {
+  width: 16px;
+  height: 16px;
+  color: white;
+}
+
+.no-results {
+  text-align: center;
+  color: #666;
+  padding: 20px;
+}
+
+.sorted-asc::after {
+  content: ' ↑';
+}
+
+.sorted-desc::after {
+  content: ' ↓';
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .list-controls {
+    flex-direction: column;
+  }
+
+  .search-input,
+  .category-select {
+    width: 100%;
+  }
 }
 
 .search-input,

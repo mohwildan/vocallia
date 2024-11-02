@@ -24,6 +24,8 @@ const electronHandler = {
   },
   minimize: () => ipcRenderer.send('minimize-window'),
   close: () => ipcRenderer.send('close-window'),
+  loadVocabulary: () => ipcRenderer.invoke('load-vocabulary'),
+  saveVocabulary: (data: any) => ipcRenderer.invoke('save-vocabulary', data),
 };
 
 contextBridge.exposeInMainWorld('electron', electronHandler);

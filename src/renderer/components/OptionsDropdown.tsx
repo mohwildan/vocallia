@@ -39,30 +39,33 @@ const OptionsDropdown = ({
     ExportService.exportToCsv(vocabulary);
   };
 
-  const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImport = async (event: any) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     try {
       const text = await file.text();
       let importedVocabulary: VocabularyData;
+      let rememberedWords: any;
 
       if (file.name.endsWith('.json')) {
-        importedVocabulary = JSON.parse(text);
+        const data = JSON.parse(text);
+        importedVocabulary = data?.vocabulary;
+        rememberedWords = data?.rememberedWords;
       } else if (file.name.endsWith('.csv')) {
-        const rows = text
+        const rows = text.vocabulary
           .split('\n')
-          .map((row) =>
+          .map((row: any) =>
             row
               .split(',')
-              .map((cell) =>
+              .map((cell: any) =>
                 cell.trim().replace(/^"|"$/g, '').replace(/""/g, '"'),
               ),
           );
 
         importedVocabulary = {};
         for (let i = 1; i < rows.length; i += 1) {
-          const [category, word, translation] = rows[i];
+          const [category, word, translation] = rows[i].vocabulary;
           if (category && word && translation) {
             if (!importedVocabulary[category]) {
               importedVocabulary[category] = {};
@@ -76,6 +79,7 @@ const OptionsDropdown = ({
 
       onSetVocabulary(importedVocabulary);
       localStorage.setItem('vocabulary', JSON.stringify(importedVocabulary));
+      localStorage.setItem('remembered-words', JSON.stringify(rememberedWords));
       alert('Vocabulary imported successfully!');
     } catch (error) {
       alert('Error importing vocabulary: ' + (error as Error).message);
